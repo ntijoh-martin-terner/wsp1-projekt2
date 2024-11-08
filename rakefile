@@ -6,7 +6,7 @@ task :seed do
 end
 
 task :dev do
-    sh 'bundle exec rerun --ignore "*.{erb,js,css}" --force-polling "rackup --host 0.0.0.0"'
+    sh 'bundle exec rerun --ignore "/**/*.{erb,js,css}" --force-polling "rackup --host 0.0.0.0"'
 end
 
 task :run do

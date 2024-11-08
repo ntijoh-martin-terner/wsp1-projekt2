@@ -29,6 +29,7 @@ class Seeder
                 username TEXT UNIQUE NOT NULL,
                 password_hash TEXT NOT NULL,
                 email TEXT UNIQUE NOT NULL,
+                profile_picture_path TEXT DEFAULT NULL,
                 verification_token TEXT,
                 verified INTEGER DEFAULT 0 NOT NULL,
                 admin INTEGER DEFAULT 0 NOT NULL)')
@@ -37,7 +38,8 @@ class Seeder
                 name TEXT NOT NULL,
                 description TEXT,
                 start_date DATE,
-                end_date DATE)')
+                end_date DATE,
+                creator user_id REFERENCES users (id) ON DELETE SET NULL)')
     db.execute('CREATE TABLE project_assignments (
                 project_id INTEGER,
                 user_id INTEGER,
