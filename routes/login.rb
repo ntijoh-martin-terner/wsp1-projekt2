@@ -67,4 +67,9 @@ class App < Sinatra::Base
 
         { status: 'error', message: 'Incorrect password or username' }.to_json
     end
+
+    post '/logout' do
+        session['user_id'] = nil 
+        redirect '/login'
+    end
 end
