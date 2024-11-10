@@ -12,19 +12,21 @@ class App < Sinatra::Base
         return @db
     end
 
-    get '/projects' do
+    get '/projects/:project_id' do |project_id|
         username = session[:user_id]
+        user = @db.execute("SELECT id FROM users WHERE username=?", [username]).first
 
-        user = @db.execute("SELECT * FROM users WHERE username=?", [username]).first
+        # Get user_id from user data
+        user_id = user['id']
 
-        @projects = @db.execute("SELECT name, description, start_date, end_date, project_id as id FROM 
-                                project_assignments 
-                                LEFT JOIN Projects
-                                ON Projects.id = project_assignments.project_id
-                                WHERE user_id=?", [user["id"]])
+        # Check if the user has access to the requested project
+        @project = @db.execute("SELECT p.* FROM projects p
+                                JOIN project_assignments pa ON pa.project_id = p.id
+                                WHERE p.id = ? AND pa.user_id = ?
+                                ", [project_id, user_id]).first
 
-        p @projects
-
-        erb :"projects"
+        if @project
+            erb :"projects"
+        end
     end
 end
