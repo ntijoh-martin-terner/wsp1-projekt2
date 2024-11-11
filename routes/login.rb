@@ -61,7 +61,7 @@ class App < Sinatra::Base
             session[:user_id] = username
             p "redirect"
             p session
-            return { status: 'success', redirect_url: '/home', message: 'Redirecting to /home' }.to_json
+            return { status: 'success', redirect_url: '/today', message: 'Redirecting to /today' }.to_json
             # redirect '/home'
         end
 

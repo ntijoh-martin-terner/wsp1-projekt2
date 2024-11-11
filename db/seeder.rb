@@ -90,16 +90,6 @@ class Seeder
     db.execute("INSERT INTO todo (project_id, name, description, start_date, end_date, last_edit_id, creator_id, completed) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
               [2, 'Beta Testing', 'Start beta testing phase', '2024-03-01', '2024-06-01', 3, 3, 0])
   end
-
-  # private
-  # def self.db
-  #   @db.execute("PRAGMA foreign_keys = ON") if @db
-  #   return @db if @db
-  #   @db = SQLite3::Database.new('db/fruits.sqlite')
-  #   @db.execute("PRAGMA foreign_keys = ON")
-  #   @db.results_as_hash = true
-  #   @db
-  # end
 end
 
 

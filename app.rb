@@ -33,10 +33,10 @@ class App < Sinatra::Base
     end
 
     get '/' do
-        redirect '/home'
+        redirect '/today'
     end
 
-    get '/home' do 
-        erb(:"home")
+    get '/today' do 
+        erb(:"today")
     end
 end

@@ -1,1 +1,29 @@
-projects
+<!-- Image and text -->
+<nav class="navbar navbar-light bg-light">
+    <a class="navbar-brand" href="#">
+        <!-- <img src="/docs/4.0/assets/brand/bootstrap-solid.svg" width="30" height="30" class="d-inline-block align-top" alt=""> -->
+        <%=@project['name']%>
+    </a>
+    <ul class="navbar-nav d-flex flex-row gap-3 ">
+        <li class="nav-item">
+            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#editProjectModal<%=@project["id"]%>">Edit</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">Add Todo</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">Invite User</a>
+        </li>
+    </ul>
+</nav>
+
+<%@todos.each do |todo|%>
+    <div class="card" style="width: 18rem;">
+        <img src="..." class="card-img-top" alt="...">
+        <div class="card-body">
+            <h5 class="card-title"><%=todo['name']%></h5>
+            <p class="card-text"><%=todo['description']%></p>
+            <a href="#" class="btn btn-primary">Mark Finished</a>
+        </div>
+    </div>
+<%end%>
