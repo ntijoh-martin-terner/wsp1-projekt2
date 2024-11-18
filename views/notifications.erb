@@ -1,0 +1,22 @@
+<ul class="list-group">
+  <% @notifications.each do |notification| %>
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <!-- Display the project name and description -->
+      <div>
+        <strong><%= notification['name'] %></strong><br>
+        <small><%= notification['description'] %></small>
+      </div>
+
+      <!-- Accept and Decline buttons inside forms -->
+      <div>
+        <form action="/projects/<%= notification['project_id'] %>/accept" method="post" class="d-inline">
+          <button type="submit" class="btn btn-success btn-sm">Accept</button>
+        </form>
+
+        <form action="/projects/<%= notification['project_id'] %>/decline" method="post" class="d-inline">
+          <button type="submit" class="btn btn-danger btn-sm">Decline</button>
+        </form>
+      </div>
+    </li>
+  <% end %>
+</ul>

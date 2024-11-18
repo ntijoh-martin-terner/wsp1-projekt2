@@ -1,1 +1,17 @@
-hej
+<ul class="list-group">
+  <% @todos.each do |todo| %>
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <!-- Display the project name and description -->
+      <div>
+        <strong><%= todo['name'] %></strong><br>
+        <small><%= todo['description'] %></small>
+      </div>
+
+      <!-- Accept and Decline buttons inside forms -->
+      <div>
+        <strong>Due to be finished today</strong>
+        <a href="/projects/<%=todo['project_id']%>" class="btn btn-danger btn-sm">Open Project</a>
+      </div>
+    </li>
+  <% end %>
+</ul>
