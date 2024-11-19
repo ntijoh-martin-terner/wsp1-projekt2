@@ -15,8 +15,14 @@ class App < BaseApp
   post '/projects/:project_id/users/add/' do |project_id|
     get_project(project_id)
 
+    added_user_name = params['name']
+
+    p added_user_name
+
+    added_user_id = db.execute('SELECT id from users WHERE USERNAME = ?', [added_user_name]).first['id']
+
     db.execute('INSERT INTO project_assignments (project_id, user_id, accepted) VALUES (?, ?, 0)',
-               [project_id, current_user_id])
+               [project_id, added_user_id.to_i])
 
     redirect back
   end
