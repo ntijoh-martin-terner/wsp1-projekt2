@@ -48,7 +48,7 @@ class Seeder
                 user_id INTEGER,
                 assigned_date DATE DEFAULT CURRENT_DATE,
                 accepted BOOLEAN DEFAULT 0 NOT NULL,
-                role_id INTEGER DEFAULT 0 NOT NULL
+                role_id INTEGER DEFAULT 0 NOT NULL,
                 admin INTEGER DEFAULT 0 NOT NULL REFERENCES roles (id) ON DELETE CASCADE,
                 PRIMARY KEY (project_id, user_id),
                 FOREIGN KEY (project_id) REFERENCES projects (id) ON DELETE CASCADE,

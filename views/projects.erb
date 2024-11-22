@@ -70,8 +70,8 @@
           <% @users.each do |user| %>
             <li class="list-group-item d-flex justify-content-between align-items-center">
               <span>
-                <%if current_user["profile_picture_id"]%>
-                  <img src="/profile_pictures/<%=current_user["profile_picture_id"]%>" alt="" width="32" height="32" class="rounded-circle me-2">
+                <%if user["profile_picture_id"]%>
+                  <img src="/profile_pictures/<%=user["profile_picture_id"]%>" alt="" width="32" height="32" class="rounded-circle me-2">
                 <%else%>
                   <svg class="rounded-circle me-2" width="32" height="32"><use xlink:href="#default-profile-picture"/></svg>
                 <%end%>
