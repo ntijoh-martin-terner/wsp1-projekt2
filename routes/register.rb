@@ -17,10 +17,6 @@ class App < BaseApp
     email = Sanitize.fragment(request_payload['email'])
     password = Sanitize.fragment(request_payload['password'])
 
-    p username, email, password
-
-    p request_payload
-
     begin
       db.transaction do
         # Hash the password
@@ -30,12 +26,6 @@ class App < BaseApp
         # Save user to the database
         db.execute('INSERT INTO users (username, email, password_hash, verification_token, verified) VALUES (?, ?, ?, ?, ?)',
                    [username, email, password_hash, verification_token, 1])
-
-        # no verification currently
-        # db.execute("INSERT INTO users (verified) VALUES (?)",
-        #             [1])
-        # Send verification email
-        # send_verification_email(email, verification_token)
       end
 
       return { status: 'success', message: 'Registration successful! Please verify your email.' }.to_json

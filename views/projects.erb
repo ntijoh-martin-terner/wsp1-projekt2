@@ -14,6 +14,9 @@
         <li class="nav-item">
             <a class="nav-link text-white" href="#" data-bs-toggle="modal" data-bs-target="#newUserModal">Users</a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link text-white" href="#" data-bs-toggle="modal" data-bs-target="#rolesModal">Roles</a>
+        </li>
     </ul>
 </nav>
 
@@ -40,7 +43,6 @@
 </div>
 
 <!-- New User Modal -->
-<!-- New User Modal -->
 <div class="modal fade" id="newUserModal" tabindex="-1" aria-labelledby="newUserModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -51,7 +53,7 @@
       <div class="modal-body">
         <!-- Search Form -->
 
-        <% if @is_admin %>
+        <% if @current_user['can_add_users'] %>
           <form id="newUserForm" action="/projects/<%= @project['id'] %>/users/add/" method="post">
             <div class="mb-3">
               <label for="userName" class="form-label">Search Name</label>
@@ -60,26 +62,61 @@
             <!-- Placeholder for the dynamic search results -->
             <ul id="userResults" class="list-group mt-2"></ul>
 
+            <div class="mb-3">
+              <select 
+                name="role_id" 
+                class="form-select d-inline-block w-auto bg-success text-white border-0" 
+                style="height: auto; font-size: 0.875rem; padding: 0.25em 0.5em; border-radius: 0.2rem;"
+              >
+                <% @roles.each do |project_role| %>
+                  <option value="<%= project_role['id'] %>">
+                    <%= project_role['name'] %>
+                  </option>
+                <% end %>
+              </select>
+            </div>
+
             <button type="submit" form="newUserForm" class="btn btn-primary">Add User</button>
           </form>
         <%end%>
-        
-        <!-- User List -->
+
         <h6 class="mt-4">Project Members</h6>
         <ul class="list-group">
-          <% @users.each do |user| %>
+        <% @users.each do |user| %>
             <li class="list-group-item d-flex justify-content-between align-items-center">
               <span>
-                <%if user["profile_picture_id"]%>
-                  <img src="/profile_pictures/<%=user["profile_picture_id"]%>" alt="" width="32" height="32" class="rounded-circle me-2">
-                <%else%>
-                  <svg class="rounded-circle me-2" width="32" height="32"><use xlink:href="#default-profile-picture"/></svg>
-                <%end%>
-                <%= user['username'] %> 
-                <% if user['admin'] == 1 %><span class="badge bg-success ms-2">Admin</span><% end %>
-                <% if user['accepted'] == 0 %><span class="badge bg-warning ms-2">Pending Invitation</span><% end %>
+                <% if user["profile_picture_id"] %>
+                  <img src="/profile_pictures/<%= user["profile_picture_id"] %>" alt="" width="32" height="32" class="rounded-circle me-2">
+                <% else %>
+                  <svg class="rounded-circle me-2" width="32" height="32">
+                    <use xlink:href="#default-profile-picture" />
+                  </svg>
+                <% end %>
+                <%= user['username'] %>
+                <% if user['accepted'] == 0 %>
+                  <span class="badge bg-warning ms-2">Pending Invitation</span>
+                <% end %>
+                <% if user['owner'] == 0 && @current_user['can_assign_roles'] == 1 %>
+                  <form action="/projects/<%= @project['id'] %>/roles/assign" method="post" class="d-inline-block ms-3">
+                    <input type="hidden" name="user_id" value="<%= user['id'] %>">
+                    <select 
+                      name="role_id" 
+                      class="form-select d-inline-block w-auto bg-success text-white border-0" 
+                      style="height: auto; font-size: 0.875rem; padding: 0.25em 0.5em; border-radius: 0.2rem;"
+                      onchange="this.form.submit()"
+                    >
+                      <% @roles.each do |project_role| %>
+                        <option value="<%= project_role['id'] %>" <%= 'selected' if project_role['id'].to_i == user['role_id'].to_i %>>
+                          <%= project_role['name'] %>
+                        </option>
+                      <% end %>
+                    </select>
+                  </form>
+                <% else %>
+                  <span class="badge bg-success ms-2"><%= user['role_name'] %></span>
+                <% end %>
               </span>
-              <% if user['admin'] == 0 && @is_admin %>
+              <% if user['owner'] == 0 && @current_user['can_delete_users'] == 1 %>
                 <form action="/projects/<%= @project['id'] %>/users/delete/" method="post" class="mb-0">
                   <input name="id" type="hidden" value="<%= user['id'] %>">
                   <button type="submit" class="btn btn-danger btn-sm">Remove</button>
@@ -133,6 +170,88 @@
     </div>
   </div>
 </div>
+
+<!-- Role Modal -->
+<!-- Roles Modal -->
+<div class="modal fade" id="rolesModal" tabindex="-1" aria-labelledby="rolesModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="rolesModalLabel">Manage Roles</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Add New Role Form -->
+        <form id="newRoleForm" action="/projects/<%= @project['id'] %>/roles/new" method="post">
+          <div class="mb-3">
+            <label for="roleName" class="form-label">Role Name</label>
+            <input type="text" class="form-control" id="roleName" name="name" placeholder="Enter role name" required>
+          </div>
+          <div class="mb-3 form-check">
+            <label class="form-check-label" for="canAddTodos">
+              <input type="checkbox" class="form-check-input" id="canAddTodos" name="can_add_todos"> Can Add Todos
+            </label>
+          </div>
+          <div class="mb-3 form-check">
+            <label class="form-check-label" for="canRemoveTodos">
+              <input type="checkbox" class="form-check-input" id="canRemoveTodos" name="can_remove_todos"> Can Remove Todos
+            </label>
+          </div>
+          <!-- Add other permissions as needed -->
+          <button type="submit" class="btn btn-primary">Add Role</button>
+        </form>
+
+        <hr>
+
+        <!-- Roles Table -->
+        <table class="table table-striped mt-4">
+          <thead>
+            <tr>
+              <th>Role Name</th>
+              <th>Can Add Todos</th>
+              <th>Can Remove Todos</th>
+              <th>Can Delete Users</th>
+              <th>Can Add Users</th>
+              <th>Can Assign Roles</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @roles.each do |role| %>
+              <tr>
+                <form action="/projects/<%= @project['id'] %>/roles/<%= role['id'] %>/update" method="post" class="role-update-form">
+                  <td>
+                    <input type="text" class="form-control" name="name" value="<%= role['name'] %>" required>
+                  </td>
+                  <td>
+                    <input type="checkbox" name="can_add_todos" <%= 'checked' if role['can_add_todos'] == 1 %>>
+                  </td>
+                  <td>
+                    <input type="checkbox" name="can_remove_todos" <%= 'checked' if role['can_remove_todos'] == 1 %>>
+                  </td>
+                  <td>
+                    <input type="checkbox" name="can_delete_users" <%= 'checked' if role['can_delete_users'] == 1 %>>
+                  </td>
+                  <td>
+                    <input type="checkbox" name="can_add_users" <%= 'checked' if role['can_add_users'] == 1 %>>
+                  </td>
+                  <td>
+                    <input type="checkbox" name="can_assign_roles" <%= 'checked' if role['can_assign_roles'] == 1 %>>
+                  </td>
+                  <td>
+                    <button type="submit" class="btn btn-success btn-sm">Save</button>
+                    <a href="/projects/<%= @project['id'] %>/roles/<%= role['id'] %>/delete" class="btn btn-danger btn-sm">Delete</a>
+                  </td>
+                </form>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 
 <script>

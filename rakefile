@@ -1,24 +1,26 @@
-task :seed do 
-    require "bundler"
-    Bundler.require
-    require_relative 'db/seeder'
-    Seeder.seed!
+# frozen_string_literal: true
+
+task :seed do
+  require 'bundler'
+  Bundler.require
+  require_relative 'db/seeder'
+  Seeder.seed!
 end
 
 task :dev do
-    sh 'bundle exec rerun --ignore "/**/*.{erb,js,css}" --force-polling "rackup --host 0.0.0.0"'
+  sh 'bundle exec rerun --ignore "/**/*.{erb,js,css}" --force-polling "rackup --host 0.0.0.0"'
 end
 
 task :run do
-    #todo
+  # todo
 end
 
 task :test do
-    #todo
+  # todo
 end
 
-#sudo rake kill med lösenordet wsp
-#todo testa på windowsdator
+# sudo rake kill med lösenordet wsp
+# todo testa på windowsdator
 task :kill do
-    sh 'killall ruby && killall rack && killall rerun'
+  sh 'killall ruby && killall rack && killall rerun'
 end
